@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Japanese Reader Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --primary: #3498db; --secondary: #2ecc71; --danger: #e74c3c; --bg: #f8f9fa; }
+        body { font-family: 'Helvetica Neue', sans-serif; background: var(--bg); margin: 0; padding: 40px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 25px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #2c3e50; margin-bottom: 30px; }
+        h3 { margin-top: 0; color: #7f8c8d; font-size: 0.9em; text-transform: uppercase; }
+        
+        .level-num { font-size: 3.5em; font-weight: bold; color: var(--secondary); margin: 10px 0; }
+        .word-tag { display: inline-block; background: var(--primary); color: white; padding: 6px 15px; border-radius: 20px; margin: 4px; font-size: 1.1em; }
+        
+        .article-card { 
+            display: block; text-decoration: none; color: inherit; padding: 15px; margin-bottom: 10px;
+            border: 1px solid #eee; border-radius: 10px; transition: transform 0.2s;
+        }
+        .article-card:hover { transform: translateX(5px); border-color: var(--primary); }
+        .diff-tag { font-size: 0.8em; color: var(--danger); font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome Back!</h1>
+        
+        <div class="grid">
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                <div class="card">
+                    <h3>Your Proficiency</h3>
+                    <div class="level-num">{{ level }}</div>
+                    <div style="font-size: 1.2em; color: #34495e;">{{ level_name }}</div>
+                </div>
+
+                <div class="card">
+                    <h3>Focus Vocabulary</h3>
+                    <p>Articles containing these words will help you improve the fastest:</p>
+                    {% for word in words %}
+                        <span class="word-tag">{{ word }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class = "card">
+                    <h3>Your Reading Level Over Time</h3>
+                    <canvas id="timeline"></canvas>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                <div class="card">
+                    <h3> Most Frequently Missed Words </h3>
+                    <canvas id="clickChart"></canvas>
+                </div>
+
+                <div class="card">
+                    <h3>Personalized Reading Suggestions</h3>
+                    {% for article in articles %}
+                    <a href="{{ article.link }}" class="article-card" target="_blank">
+                        <div style="font-weight: bold; font-size: 1.1em;">{{ article.title }}</div>
+                        <div class="diff-tag">Difficulty Match: {{ article.level_difference|round(2) }}</div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script>
+        // Data from FastAPI
+        const clicks = {{ click_counts | tojson }};
+        const sortedLabels = Object.keys(clicks).sort((a,b) => clicks[b] - clicks[a]).slice(0, 10);
+        const dataValues = sortedLabels.map(label => clicks[label]);
+
+        new Chart(document.getElementById('clickChart'), {
+            type: 'bar',
+            data: {
+                labels: sortedLabels,
+                datasets: [{
+                    label: 'Lookups',
+                    data: dataValues,
+                    backgroundColor: '#3498db',
+                    borderRadius: 5
+                }]
+            },
+            options: { indexAxis: 'y', plugins: { legend: { display: false } } }
+        });
+        new Chart(document.getElementById('timeline'), {
+            type: 'line',
+            data: {
+                // Use your raw timestamps here; the adapter will parse them
+                labels: {{ timeline_times | tojson }},
+                datasets: [{
+                    label: 'Reading Level',
+                    data: {{ timeline_levels | tojson }},
+                    fill: false,
+                    borderColor: '#2ecc71',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true, // Set this to TRUE to force a standard 2:1 ratio
+                aspectRatio: 3,            // A higher number (like 3 or 4) makes it very "flat"
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 7,            // Forces the chart to always show the 0-7 range
+                        ticks: { stepSize: 1 }
+                    },
+                    x: {
+                        type: 'time', 
+                        time: {
+                            unit: 'day', 
+                            displayFormats: {
+                                day: 'MMM d' 
+                            },
+                            tooltipFormat: 'PPpp' 
+                        },
+                        title: { display: true, text: 'Date' },
+                        ticks: {
+                            maxRotation: 0,
+                            autoSkip: true 
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    
+</body>
+</html>

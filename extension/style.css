@@ -1,0 +1,56 @@
+body { 
+    font-family: 'Hiragino Sans', 'Meiryo', sans-serif; 
+    padding: 100px 50px; /* Lots of top room for stacked hints */
+    line-height: 5;      /* Increased to 5 to prevent line overlap */
+    background-color: #fcfcfc;
+}
+
+#article { max-width: 800px; margin: 0 auto; font-size: 24px; }
+
+.word-block {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    padding: 0 2px;
+    z-index: 1;
+}
+
+rt, .eng-hint { 
+    visibility: hidden; 
+    opacity: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    width: max-content;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    text-align: center;
+}
+
+/* called ruby text */
+rt { 
+    top: 2.0em;
+    font-size: 0.55em;
+    color: #3498db; 
+    display: block;
+}
+
+.eng-hint {
+    top: -1.0em;   
+    color: #8e44ad; 
+    font-size: 0.5em; 
+    font-weight: normal;
+    background: none; 
+    padding: 0;
+}
+
+.state-1 rt { visibility: visible; opacity: 1; }
+
+.state-2 rt { visibility: visible; opacity: 1; }
+.state-2 .eng-hint { visibility: visible; opacity: 1; }
+
+.word-block:hover { 
+    background-color: #f0f7ff; 
+    border-radius: 4px; 
+}
