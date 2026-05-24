@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reading Assistant Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --primary: #3498db; --secondary: #2ecc71; --danger: #e74c3c; --bg: #f8f9fa; }
+        body { font-family: 'Helvetica Neue', sans-serif; background: var(--bg); margin: 0; padding: 40px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 25px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #2c3e50; margin-bottom: 10px; }
+        h3 { margin-top: 0; color: #7f8c8d; font-size: 0.9em; text-transform: uppercase; }
+
+        .level-num { font-size: 3.5em; font-weight: bold; color: var(--secondary); margin: 10px 0; }
+        .level-label { font-size: 1.3em; color: #34495e; font-weight: 600; }
+        .word-tag { display: inline-block; background: var(--primary); color: white; padding: 6px 15px; border-radius: 20px; margin: 4px; font-size: 1.1em; }
+
+        .article-card {
+            display: block; text-decoration: none; color: inherit; padding: 15px; margin-bottom: 10px;
+            border: 1px solid #eee; border-radius: 10px; transition: transform 0.2s;
+        }
+        .article-card:hover { transform: translateX(5px); border-color: var(--primary); }
+        .diff-tag { font-size: 0.8em; font-weight: bold; }
+        .diff-good { color: #2ecc71; }
+        .diff-hard { color: #e74c3c; }
+        .diff-easy { color: #3498db; }
+
+        .lang-toggle { display: flex; gap: 8px; margin-bottom: 30px; }
+        .lang-toggle a {
+            padding: 8px 20px; border-radius: 20px; text-decoration: none;
+            font-size: 0.9em; border: 2px solid #ddd; color: #666; transition: all 0.2s;
+        }
+        .lang-toggle a:hover { border-color: var(--primary); color: var(--primary); }
+        .lang-toggle a.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+        .no-data { color: #aaa; font-style: italic; font-size: 0.9em; }
+
+        /* tooltip popup for the ? button */
+        .info-btn {
+            display: inline-block;
+            width: 18px; height: 18px;
+            background: #bdc3c7;
+            color: white;
+            border-radius: 50%;
+            font-size: 11px;
+            text-align: center;
+            line-height: 18px;
+            cursor: pointer;
+            margin-left: 6px;
+            position: relative;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+
+        .info-btn:hover .info-popup {
+            display: block;
+        }
+
+        .info-popup {
+            display: none;
+            position: absolute;
+            left: 24px;
+            top: -8px;
+            background: #2c3e50;
+            color: white;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 12px;
+            width: 240px;
+            z-index: 100;
+            line-height: 1.6;
+            font-weight: normal;
+        }
+
+        .info-popup::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 14px;
+            border: 6px solid transparent;
+            border-right-color: #2c3e50;
+            border-left: none;
+        }
+
+        .jlpt-table { width: 100%; margin-top: 8px; border-collapse: collapse; }
+        .jlpt-table td { padding: 2px 4px; font-size: 11px; }
+        .jlpt-table td:first-child { color: #7ecff5; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome Back!</h1>
+
+        <div class="lang-toggle">
+            <a href="/dashboard?lang=es" class="{{ 'active' if lang == 'es' else '' }}">🇪🇸 Spanish</a>
+            <a href="/dashboard?lang=fr" class="{{ 'active' if lang == 'fr' else '' }}">🇫🇷 French</a>
+            <a href="/dashboard?lang=ja" class="{{ 'active' if lang == 'ja' else '' }}">🇯🇵 Japanese</a>
+        </div>
+
+        <div class="grid">
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                <div class="card">
+                    <h3>
+                        Your Proficiency
+                        <span class="info-btn">?
+                            <div class="info-popup">
+                                <strong>How we calculate your score</strong><br>
+                                We fit a regression line to your reading sessions — plotting miss rate vs article difficulty. Your score is where that line predicts you'd land at a 3% miss rate (comfortable reading).<br><br>
+                                {% if lang == 'ja' %}
+                                <strong>JLPT comparison:</strong>
+                                <table class="jlpt-table">
+                                    <tr><td>N5</td><td>Beginner (~10–25)</td></tr>
+                                    <tr><td>N4</td><td>Elementary (~25–40)</td></tr>
+                                    <tr><td>N3</td><td>Intermediate (~40–55)</td></tr>
+                                    <tr><td>N2</td><td>Upper Int. (~55–75)</td></tr>
+                                    <tr><td>N1</td><td>Advanced (~75+)</td></tr>
+                                </table>
+                                {% else %}
+                                <strong>CEFR comparison:</strong>
+                                <table class="jlpt-table">
+                                    <tr><td>A1</td><td>Beginner (~10–25)</td></tr>
+                                    <tr><td>A2</td><td>Elementary (~25–40)</td></tr>
+                                    <tr><td>B1</td><td>Intermediate (~40–55)</td></tr>
+                                    <tr><td>B2</td><td>Upper Int. (~55–75)</td></tr>
+                                    <tr><td>C1/C2</td><td>Advanced (~75+)</td></tr>
+                                </table>
+                                {% endif %}
+                            </div>
+                        </span>
+                    </h3>
+                    {% if level %}
+                        <div class="level-num">{{ level }}</div>
+                        <div class="level-label">{{ level_name }}</div>
+                    {% else %}
+                        <p class="no-data">Complete at least 5 reading sessions to see your level.</p>
+                    {% endif %}
+                </div>
+
+                <div class="card">
+                    <h3>Focus Vocabulary</h3>
+                    {% if words %}
+                        <p>Articles containing these words will help you improve the fastest:</p>
+                        {% for word in words %}
+                            <span class="word-tag">{{ word }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-data">No vocabulary suggestions yet — start reading!</p>
+                    {% endif %}
+                </div>
+
+                <div class="card">
+                    <h3>Your Reading Level Over Time</h3>
+                    {% if timeline_levels %}
+                        <canvas id="timeline"></canvas>
+                    {% else %}
+                        <p class="no-data">No data yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                <div class="card">
+                    <h3>Most Frequently Missed Words</h3>
+                    {% if click_counts %}
+                        <canvas id="clickChart"></canvas>
+                    {% else %}
+                        <p class="no-data">No words clicked yet.</p>
+                    {% endif %}
+                </div>
+
+                <div class="card">
+                    <h3>Personalized Reading Suggestions</h3>
+                    {% if articles %}
+                        {% for article in articles %}
+                        <a href="{{ article.link }}" class="article-card" target="_blank">
+                            <div style="font-weight: bold; font-size: 1.1em;">{{ article.title }}</div>
+                            {% if article.level_difference < 15 %}
+                                <div class="diff-tag diff-good">✓ Good match</div>
+                            {% elif article.level_difference < 30 %}
+                                <div class="diff-tag diff-hard">↑ Challenging</div>
+                            {% else %}
+                                <div class="diff-tag diff-easy">↓ Easier than your level</div>
+                            {% endif %}
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-data">Read a few articles first to get suggestions.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script>
+        const clicks = {{ click_counts | tojson }};
+        const timelineLevels = {{ timeline_levels | tojson }};
+        const timelineTimes = {{ timeline_times | tojson }};
+
+        if (Object.keys(clicks).length > 0) {
+            const sortedLabels = Object.keys(clicks).sort((a, b) => clicks[b] - clicks[a]).slice(0, 10);
+            const dataValues = sortedLabels.map(label => clicks[label]);
+
+            new Chart(document.getElementById('clickChart'), {
+                type: 'bar',
+                data: {
+                    labels: sortedLabels,
+                    datasets: [{
+                        label: 'Lookups',
+                        data: dataValues,
+                        backgroundColor: '#3498db',
+                        borderRadius: 5
+                    }]
+                },
+                options: { indexAxis: 'y', plugins: { legend: { display: false } } }
+            });
+        }
+
+        if (timelineLevels.length > 0) {
+            new Chart(document.getElementById('timeline'), {
+                type: 'line',
+                data: {
+                    labels: timelineTimes,
+                    datasets: [{
+                        label: 'Proficiency Score',
+                        data: timelineLevels,
+                        fill: false,
+                        borderColor: '#2ecc71',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1.8,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { stepSize: 10 }
+                        },
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                displayFormats: { day: 'MMM d' },
+                                tooltipFormat: 'PPpp'
+                            },
+                            title: { display: true, text: 'Date' },
+                            ticks: { maxRotation: 0, autoSkip: true }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

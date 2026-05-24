@@ -1,17 +1,33 @@
 {
-  "manifest_version": 3,
-  "name": "Japanese Reading Assistant",
-  "version": "1.0",
-  "permissions": ["storage", "activeTab", "scripting"],
-  "host_permissions": ["http://127.0.0.1:8000/*"],
-  "action": {
-    "default_popup": "popup.html"
-  },
-  "content_scripts": [
-    {
-      "matches": ["https://news.yahoo.co.jp/*", "https://www3.nhk.or.jp/*"],
-      "css": ["style.css"],
-      "js": ["content.js"]
-    }
-  ]
+    "manifest_version": 3,
+    "name": "Language Reading Assistant",
+    "version": "1.0",
+    "description": "Read any webpage in Spanish, French or Japanese with instant word translations.",
+    "permissions": ["storage", "activeTab", "scripting"],
+    "host_permissions": [
+        "https://api.anthropic.com/*",
+        "https://api.mymemory.translated.net/*",
+        "https://cdn.jsdelivr.net/*",
+        "http://127.0.0.1:8000/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "css": ["style.css"],
+            "js": ["kuromoji.js", "content.js"],
+            "run_at": "document_idle"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["languages/*", "languages/ja/dict/*"],
+            "matches": ["<all_urls>"]
+        }
+    ]
 }

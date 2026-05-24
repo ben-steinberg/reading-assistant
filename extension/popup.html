@@ -1,16 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>Language Reading Assistant</title>
     <style>
-        body { width: 200px; padding: 15px; font-family: sans-serif; }
-        .status { color: #2ecc71; font-weight: bold; margin-bottom: 10px; }
-        button { width: 100%; padding: 10px; cursor: pointer; background: #3498db; color: white; border: none; border-radius: 5px; }
+        body {
+            width: 300px;
+            padding: 16px;
+            font-family: sans-serif;
+            font-size: 14px;
+            background: #1a1a2e;
+            color: #eee;
+            margin: 0;
+        }
+        h2 { margin: 0 0 4px 0; font-size: 15px; color: white; }
+        .subtitle { color: #888; font-size: 11px; margin-bottom: 16px; }
+        .section-label {
+            font-size: 10px; text-transform: uppercase;
+            color: #666; letter-spacing: 1px; margin-bottom: 6px;
+        }
+        .lang-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px; margin-bottom: 14px;
+        }
+        .lang-btn {
+            background: #2a2a3e; border: 1px solid #333;
+            border-radius: 6px; padding: 10px 8px;
+            cursor: pointer; text-align: center; color: #eee; font-size: 11px;
+        }
+        .lang-btn:hover { border-color: #3498db; }
+        .lang-btn.active { border-color: #3498db; background: #1e3a5f; }
+        .lang-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+        .lang-flag { font-size: 22px; display: block; margin-bottom: 3px; }
+        #btn-activate {
+            width: 100%; padding: 12px;
+            background: #3498db; color: white;
+            border: none; border-radius: 6px;
+            font-size: 13px; cursor: pointer; margin-bottom: 8px;
+        }
+        #btn-activate:hover { opacity: 0.9; }
+        #btn-dashboard {
+            width: 100%; padding: 8px;
+            background: transparent; color: #aaa;
+            border: 1px solid #333; border-radius: 6px;
+            font-size: 12px; cursor: pointer; margin-bottom: 10px;
+        }
+        #btn-dashboard:hover { border-color: #aaa; color: white; }
+        #server-status { font-size: 10px; color: #555; }
+        #server-status.online { color: #2ecc71; }
+        #server-status.offline { color: #e74c3c; }
     </style>
 </head>
 <body>
-    <div id="status" class="status">Server: Checking...</div>
-    <button id="open-dashboard">Open Dashboard</button>
+    <h2>Reading Assistant</h2>
+    <div class="subtitle">click any word to translate it</div>
+
+    <div class="section-label">Language</div>
+    <div class="lang-grid">
+        <div class="lang-btn active" data-lang="es">
+            <span class="lang-flag">🇪🇸</span>
+            Spanish
+        </div>
+        <div class="lang-btn" data-lang="fr">
+            <span class="lang-flag">🇫🇷</span>
+            French
+        </div>
+        <div class="lang-btn" data-lang="ja">
+            <span class="lang-flag">🇯🇵</span>
+            Japanese
+        </div>
+    </div>
+
+    <button id="btn-activate">start reading mode</button>
+    <button id="btn-dashboard">open dashboard ↗</button>
+
+    <div style="margin-top: 10px;">
+        <div class="section-label">Anthropic API Key (optional, better translations)</div>
+        <div style="display:flex; gap:6px;">
+            <input type="password" id="api-key-input" placeholder="sk-ant-..." style="
+                flex:1; background:#2a2a3e; border:1px solid #333; border-radius:6px;
+                padding:7px 10px; color:#eee; font-size:11px; outline:none;
+            ">
+            <button id="btn-save-key" style="
+                background:#3498db; color:white; border:none; border-radius:6px;
+                padding:7px 12px; font-size:11px; cursor:pointer;
+            ">Save</button>
+        </div>
+        <div id="key-status" style="font-size:10px; color:#555; margin-top:4px;"></div>
+    </div>
+
+    <div id="server-status" style="margin-top:8px;">dashboard server: checking...</div>
+
     <script src="popup.js"></script>
-    <hr> <button id="start-reading" style="background-color: #2ecc71; margin-top: 10px;">Start Reading Mode</button>
 </body>
 </html>
