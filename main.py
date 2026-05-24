@@ -162,6 +162,8 @@ async def get_user_level(lang: str = "es"):
         return {"level": round(float(level), 2)}
     except Exception as e:
         return {"level": None}
+
+@app.get("/dashboard")
 async def get_dashboard(request: Request, lang: str = "es"):
     # try to calculate level - need at least 5 sessions
     try:
