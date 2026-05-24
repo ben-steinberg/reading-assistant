@@ -34,7 +34,7 @@ async function checkServerStatus() {
     const statusEl = document.getElementById("server-status");
     if (!statusEl) return;
     try {
-        await fetch("http://127.0.0.1:8000/dashboard");
+        await fetch("https://web-production-c4aac1.up.railway.app/dashboard");
         statusEl.textContent = "dashboard server: online ✓";
         statusEl.className = "online";
     } catch(e) {
@@ -102,7 +102,7 @@ function setupButtons() {
     const dashBtn = document.getElementById("btn-dashboard");
     if (dashBtn) {
         dashBtn.addEventListener("click", () => {
-            chrome.tabs.create({ url: "http://127.0.0.1:8000/dashboard" });
+            chrome.tabs.create({ url: "https://web-production-c4aac1.up.railway.app/dashboard" });
         });
     }
 }

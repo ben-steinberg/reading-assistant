@@ -8,6 +8,7 @@
         "https://api.anthropic.com/*",
         "https://api.mymemory.translated.net/*",
         "https://cdn.jsdelivr.net/*",
+        "https://web-production-c4aac1.up.railway.app/*",
         "http://127.0.0.1:8000/*"
     ],
     "background": {
