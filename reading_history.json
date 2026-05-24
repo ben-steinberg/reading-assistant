@@ -38,5 +38,40 @@
         "difficulty": "4.4087275803722505",
         "percentage": 9.7,
         "timestamp": "2025-12-21 16:50:12.536623"
+    },
+    {
+        "difficulty": "50.00",
+        "percentage": 2.3,
+        "language": "es",
+        "suspicious": false,
+        "timestamp": "2026-05-24 09:55:53.969066"
+    },
+    {
+        "difficulty": "50.00",
+        "percentage": 0.9,
+        "language": "es",
+        "suspicious": false,
+        "timestamp": "2026-05-24 09:58:59.150778"
+    },
+    {
+        "difficulty": "50.00",
+        "percentage": 0.3,
+        "language": "es",
+        "suspicious": false,
+        "timestamp": "2026-05-24 10:01:29.199144"
+    },
+    {
+        "difficulty": "50.00",
+        "percentage": 0.6,
+        "language": "es",
+        "suspicious": false,
+        "timestamp": "2026-05-24 10:03:06.198874"
+    },
+    {
+        "difficulty": "50.00",
+        "percentage": 0.4,
+        "language": "es",
+        "suspicious": false,
+        "timestamp": "2026-05-24 10:04:43.343461"
     }
 ]

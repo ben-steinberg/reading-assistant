@@ -11,3 +11,4 @@ pykakasi
 deep-translator
 jreadability
 requests
+scipy
