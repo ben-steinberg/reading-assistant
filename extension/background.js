@@ -3,7 +3,7 @@
 // using mymemory which is free and doesn't need an api key
 // also posts click/session data to the local fastapi server for the dashboard
 
-const SERVER = "https://web-production-c4aac1.up.railway.app";
+const SERVER = "http://127.0.0.1:8000";
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "translate") {
