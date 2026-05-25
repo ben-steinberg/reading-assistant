@@ -206,7 +206,7 @@ def load_stop_words(language):
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as f:
             for i, line in enumerate(f):
-                if i >= 100:
+                if i >= 200:
                     break
                 stop_words.add(line.strip().lower())
 

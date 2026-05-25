@@ -101,9 +101,9 @@ async function loadWordLists() {
                 lines.forEach((line, index) => {
                     const w = line.trim().toLowerCase();
                     if (!w) return;
-                    // first 100 words of A1 are stop words - tag them separately
+                    // first 200 words of A1 are stop words - tag them separately
                     // so function words like "el", "de", "que" don't skew difficulty
-                    if (i === 0 && index < 100) {
+                    if (i === 0 && index < 200) {
                         knownWords[w] = { level: "stop", score: null };
                     } else if (!knownWords[w]) {
                         knownWords[w] = { level: levels[i], score: scores[levels[i]] };
