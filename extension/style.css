@@ -81,3 +81,15 @@
     border: 4px solid transparent !important;
     border-top-color: #333 !important;
 }
+
+body.ra-active ruby rt {
+    visibility: hidden !important;
+}
+
+.ra-word ruby rt {
+    visibility: visible !important;
+    display: block !important;
+    font-size: 0.55em !important;
+    color: #3498db !important;
+    opacity: 1 !important;
+}

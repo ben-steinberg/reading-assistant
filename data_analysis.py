@@ -344,8 +344,16 @@ def get_timeline(language="ja"):
     else:
         history = []
 
-    level_array = [entry['level'] for entry in history]
-    time_array = [entry['timestamp'] for entry in history]
+    # keep only the most recent entry per day
+    by_day = {}
+    for entry in history:
+        day = entry['timestamp'][:10]
+        by_day[day] = entry
+
+    deduped = sorted(by_day.values(), key=lambda e: e['timestamp'])
+
+    level_array = [entry['level'] for entry in deduped]
+    time_array = [entry['timestamp'] for entry in deduped]
 
     return level_array, time_array
 

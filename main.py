@@ -34,6 +34,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def translate_words(words, lang):
+    source = "ja" if lang == "ja" else "es" if lang == "es" else "fr"
+    translations = {}
+    for word in words:
+        try:
+            translations[word] = GoogleTranslator(source=source, target="en").translate(word)
+        except:
+            translations[word] = ""
+    return translations
+
 def get_processed_data_simple(text):
     result = kks.convert(text)
     processed = []
@@ -165,14 +175,21 @@ async def get_user_level(lang: str = "es"):
 
 @app.get("/dashboard")
 async def get_dashboard(request: Request, lang: str = "es"):
-    # try to calculate level - need at least 5 sessions
     try:
         user_level = calculate_user_level(lang)
-        suggested_words = give_suggested_words(user_level, lang)
-        websites = to_websites(user_level, suggested_words, lang)
     except Exception as e:
-        print("Not enough data yet:", e)
+        print("Could not calculate level:", e)
         user_level = 0
+
+    try:
+        if user_level:
+            suggested_words = give_suggested_words(user_level, lang)
+            websites = to_websites(user_level, suggested_words, lang)
+        else:
+            suggested_words = []
+            websites = []
+    except Exception as e:
+        print("Could not get suggestions:", e)
         suggested_words = []
         websites = []
 
@@ -185,6 +202,10 @@ async def get_dashboard(request: Request, lang: str = "es"):
     
     click_counts = get_click_counts(lang)
 
+    top_clicks = dict(sorted(click_counts.items(), key=lambda x: x[1], reverse=True)[:10])
+    all_words_to_translate = list(set(suggested_words + list(top_clicks.keys())))
+    word_translations = translate_words(all_words_to_translate, lang)
+
     return templates.TemplateResponse(request, "dashboard.html", {
         "lang": lang,
         "level": round(user_level, 2) if user_level else 0,
@@ -193,7 +214,8 @@ async def get_dashboard(request: Request, lang: str = "es"):
         "articles": websites,
         "click_counts": click_counts,
         "timeline_levels": timeline_levels,
-        "timeline_times": formatted_times
+        "timeline_times": formatted_times,
+        "word_translations": word_translations
     })
 
 '''

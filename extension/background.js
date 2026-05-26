@@ -37,6 +37,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.tabs.create({ url: SERVER + "/dashboard" });
         sendResponse({ success: true });
     }
+
+    if (request.action === "detected_language") {
+        chrome.storage.local.set({ detectedLanguage: request.language || null });
+        sendResponse({ success: true });
+    }
 });
 
 async function translateWord(word, language) {

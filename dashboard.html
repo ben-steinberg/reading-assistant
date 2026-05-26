@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Reading Assistant Dashboard</title>
+    <title>Legible</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --primary: #3498db; --secondary: #2ecc71; --danger: #e74c3c; --bg: #f8f9fa; }
@@ -44,7 +44,7 @@
             background: #bdc3c7;
             color: white;
             border-radius: 50%;
-            font-size: 11px;
+            font-size: 12px;
             text-align: center;
             line-height: 18px;
             cursor: pointer;
@@ -107,7 +107,7 @@
                         <span class="info-btn">?
                             <div class="info-popup">
                                 <strong>How we calculate your score</strong><br>
-                                We fit a regression line to your reading sessions — plotting miss rate vs article difficulty. Your score is where that line predicts you'd land at a 1.75% miss rate (comfortable reading).<br><br>
+                                We fit a regression line to your reading sessions — plotting miss rate vs article difficulty. Your score is where that line predicts you'd land at a 3% miss rate (comfortable reading).<br><br>
                                 {% if lang == 'ja' %}
                                 <strong>JLPT comparison:</strong>
                                 <table class="jlpt-table">
@@ -143,10 +143,15 @@
                     {% if words %}
                         <p>Articles containing these words will help you improve the fastest:</p>
                         {% for word in words %}
-                            <span class="word-tag">{{ word }}</span>
+                            <span class="word-tag">
+                                {{ word }}
+                                {% if word_translations.get(word) %}
+                                    <span style="display:block; font-size:0.75em; opacity:0.8; font-weight:normal;">{{ word_translations[word] }}</span>
+                                {% endif %}
+                            </span>
                         {% endfor %}
                     {% else %}
-                        <p class="no-data">No vocabulary suggestions yet — start reading!</p>
+                        <p class="no-data">No vocabulary suggestions yet.</p>
                     {% endif %}
                 </div>
 
@@ -198,6 +203,7 @@
         const clicks = {{ click_counts | tojson }};
         const timelineLevels = {{ timeline_levels | tojson }};
         const timelineTimes = {{ timeline_times | tojson }};
+        const wordTranslations = {{ word_translations | tojson }};
 
         if (Object.keys(clicks).length > 0) {
             const sortedLabels = Object.keys(clicks).sort((a, b) => clicks[b] - clicks[a]).slice(0, 10);
@@ -214,7 +220,20 @@
                         borderRadius: 5
                     }]
                 },
-                options: { indexAxis: 'y', plugins: { legend: { display: false } } }
+                options: {
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: (context) => {
+                                    const word = context.label;
+                                    return wordTranslations[word] ? wordTranslations[word] : '';
+                                }
+                            }
+                        }
+                    }
+                }
             });
         }
 

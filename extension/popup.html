@@ -20,18 +20,23 @@
             color: #666; letter-spacing: 1px; margin-bottom: 6px;
         }
         .lang-grid {
-            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            display: flex;
             gap: 6px; margin-bottom: 14px;
         }
         .lang-btn {
+            flex: 1;
             background: #2a2a3e; border: 1px solid #333;
             border-radius: 6px; padding: 10px 8px;
             cursor: pointer; text-align: center; color: #eee; font-size: 11px;
+            transition: flex 0.3s ease;
+            overflow: hidden;
+            min-width: 0;
         }
         .lang-btn:hover { border-color: #3498db; }
         .lang-btn.active { border-color: #3498db; background: #1e3a5f; }
         .lang-btn.disabled { opacity: 0.4; cursor: not-allowed; }
         .lang-flag { font-size: 22px; display: block; margin-bottom: 3px; }
+        .lang-label { display: block; white-space: nowrap; overflow: hidden; }
         #btn-activate {
             width: 100%; padding: 12px;
             background: #3498db; color: white;
@@ -57,17 +62,17 @@
 
     <div class="section-label">Language</div>
     <div class="lang-grid">
-        <div class="lang-btn active" data-lang="es">
+        <div class="lang-btn" data-lang="es">
             <span class="lang-flag">🇪🇸</span>
-            Spanish
+            <span class="lang-label">Spanish</span>
         </div>
         <div class="lang-btn" data-lang="fr">
             <span class="lang-flag">🇫🇷</span>
-            French
+            <span class="lang-label">French</span>
         </div>
         <div class="lang-btn" data-lang="ja">
             <span class="lang-flag">🇯🇵</span>
-            Japanese
+            <span class="lang-label">Japanese</span>
         </div>
     </div>
 

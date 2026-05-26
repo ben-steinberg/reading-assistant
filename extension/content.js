@@ -316,6 +316,17 @@ function processLatinNodes(nodes, levelCounts) {
     });
 }
 
+function stripExistingRuby() {
+    document.querySelectorAll("ruby").forEach(ruby => {
+        const baseText = Array.from(ruby.childNodes)
+            .filter(n => n.nodeType === Node.TEXT_NODE ||
+                        (n.nodeType === Node.ELEMENT_NODE && n.tagName.toLowerCase() !== "rt"))
+            .map(n => n.textContent)
+            .join("");
+        ruby.replaceWith(document.createTextNode(baseText));
+    });
+}
+
 function startReading() {
     if (isActive) return;
     isActive = true;
@@ -333,7 +344,10 @@ function startReading() {
     sessionStartTime = Date.now();
     scrollSuspicious = false;
 
+    document.body.classList.add("ra-active");
     document.body.dataset.original = document.body.innerHTML;
+
+    if (language === "ja") stripExistingRuby();
 
     // walk through all text nodes
     const walker = document.createTreeWalker(
@@ -344,7 +358,6 @@ function startReading() {
                 const tag = node.parentElement?.tagName?.toLowerCase();
                 if (["script", "style", "noscript"].includes(tag)) return NodeFilter.FILTER_REJECT;
                 if (tag === "rt") return NodeFilter.FILTER_SKIP;
-                if (tag === "ruby") return NodeFilter.FILTER_SKIP;
                 if (node.textContent.trim().length < 2) return NodeFilter.FILTER_REJECT;
                 return NodeFilter.FILTER_ACCEPT;
             }
@@ -472,6 +485,7 @@ function stopReading() {
 
     saveSession();
 
+    document.body.classList.remove("ra-active");
     if (document.body.dataset.original) {
         document.body.innerHTML = document.body.dataset.original;
     }
@@ -511,8 +525,14 @@ async function handleClick(e) {
 
     chrome.runtime.sendMessage({ action: "translate", word: orig, language: language }, (res) => {
         if (!document.contains(tooltip)) return;
+        const reading = span.dataset.reading ? span.dataset.reading.split('').map(c => {
+            const code = c.charCodeAt(0);
+            return (code >= 0x30A1 && code <= 0x30F6) ? String.fromCharCode(code - 0x60) : c;
+        }).join('') : '';
         if (res && res.success) {
-            tooltip.textContent = res.translation;
+            tooltip.innerHTML = reading
+                ? `<div>${res.translation}</div><div style="font-size:1.1em;">${reading}</div>`
+                : `<div>${res.translation}</div>`;
         } else {
             tooltip.textContent = "couldn't translate";
         }

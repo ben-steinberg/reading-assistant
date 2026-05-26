@@ -1,45 +1,5 @@
 [
     {
-        "difficulty": "5.02",
-        "percentage": 5.3,
-        "timestamp": "2025-12-21 11:32:41.356210"
-    },
-    {
-        "difficulty": "3.01",
-        "percentage": 21.0,
-        "timestamp": "2025-12-21 11:38:53.674809"
-    },
-    {
-        "difficulty": "3.2",
-        "percentage": 20.7,
-        "timestamp": "2025-12-21 11:43:09.403003"
-    },
-    {
-        "difficulty": "2.6",
-        "percentage": 28.6,
-        "timestamp": "2025-12-21 11:45:19.352841"
-    },
-    {
-        "difficulty": "3.21",
-        "percentage": 6.9,
-        "timestamp": "2025-12-21 11:46:32.037586"
-    },
-    {
-        "difficulty": "5.4",
-        "percentage": 1.5,
-        "timestamp": "2025-12-21 11:57:43.939905"
-    },
-    {
-        "difficulty": "4.756095880149814",
-        "percentage": 3.8,
-        "timestamp": "2025-12-21 12:10:23.263406"
-    },
-    {
-        "difficulty": "4.4087275803722505",
-        "percentage": 9.7,
-        "timestamp": "2025-12-21 16:50:12.536623"
-    },
-    {
         "difficulty": "62.00",
         "percentage": 0.8,
         "language": "es",
@@ -94,5 +54,47 @@
         "language": "es",
         "suspicious": false,
         "timestamp": "2026-05-26 11:51:41.380255"
+    },
+    {
+        "difficulty": "34.09",
+        "percentage": 20,
+        "language": "ja",
+        "suspicious": false,
+        "timestamp": "2026-05-26 12:19:58.126219"
+    },
+    {
+        "difficulty": "29.51",
+        "percentage": 3.4,
+        "language": "ja",
+        "suspicious": false,
+        "timestamp": "2026-05-26 12:44:55.881115"
+    },
+    {
+        "difficulty": "36.64",
+        "percentage": 0.3,
+        "language": "ja",
+        "suspicious": false,
+        "timestamp": "2026-05-26 13:38:29.377692"
+    },
+    {
+        "difficulty": "30.06",
+        "percentage": 4.8,
+        "language": "ja",
+        "suspicious": false,
+        "timestamp": "2026-05-26 13:42:30.010208"
+    },
+    {
+        "difficulty": "31.19",
+        "percentage": 4.5,
+        "language": "ja",
+        "suspicious": false,
+        "timestamp": "2026-05-26 13:45:58.615282"
+    },
+    {
+        "difficulty": "31.17",
+        "percentage": 4.8,
+        "language": "ja",
+        "suspicious": false,
+        "timestamp": "2026-05-26 13:49:50.934436"
     }
 ]

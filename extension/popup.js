@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     checkServerStatus();
     setupButtons();
     loadSavedKey();
+    await applyDetectedLanguage();
 });
 
 async function loadSavedKey() {
@@ -55,6 +56,49 @@ function setButtonActive(active) {
     }
 }
 
+async function applyDetectedLanguage() {
+    const labels = { es: "Spanish", fr: "French", ja: "Japanese" };
+
+    let detectedLanguage = null;
+    try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tab) {
+            const results = await chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: () => {
+                    const text = document.body.innerText.slice(0, 500);
+                    if (/[\u3000-\u9fff\uff00-\uffef]/.test(text)) return "ja";
+                    if (/[¿¡ñ]/i.test(text)) return "es";
+                    if (/[àâœæçî]/i.test(text)) return "fr";
+                    return null;
+                }
+            });
+            detectedLanguage = results?.[0]?.result || null;
+        }
+    } catch(e) {}
+
+    if (!detectedLanguage) {
+        // no language detected - show all evenly with labels
+        document.querySelectorAll(".lang-btn").forEach(btn => {
+            btn.style.flex = "1";
+            const labelEl = btn.querySelector(".lang-label");
+            if (labelEl) labelEl.textContent = labels[btn.dataset.lang];
+        });
+        return;
+    }
+
+    selectedLang = detectedLanguage;
+
+    document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.classList.remove("active");
+        const isDetected = btn.dataset.lang === detectedLanguage;
+        btn.style.flex = isDetected ? "3" : "1";
+        const labelEl = btn.querySelector(".lang-label");
+        if (labelEl) labelEl.textContent = isDetected ? labels[btn.dataset.lang] : "";
+        if (isDetected) btn.classList.add("active");
+    });
+}
+
 function setupButtons() {
     document.getElementById("btn-save-key").addEventListener("click", async () => {
         const key = document.getElementById("api-key-input").value.trim();
@@ -71,8 +115,17 @@ function setupButtons() {
 
     document.querySelectorAll(".lang-btn:not(.disabled)").forEach(btn => {
         btn.addEventListener("click", () => {
-            document.querySelectorAll(".lang-btn").forEach(b => b.classList.remove("active"));
+            const labels = { es: "Spanish", fr: "French", ja: "Japanese" };
+            document.querySelectorAll(".lang-btn").forEach(b => {
+                b.classList.remove("active");
+                b.style.flex = "1";
+                const labelEl = b.querySelector(".lang-label");
+                if (labelEl) labelEl.textContent = "";
+            });
             btn.classList.add("active");
+            btn.style.flex = "3";
+            const labelEl = btn.querySelector(".lang-label");
+            if (labelEl) labelEl.textContent = labels[btn.dataset.lang];
             selectedLang = btn.dataset.lang;
         });
     });
