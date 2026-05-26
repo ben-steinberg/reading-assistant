@@ -342,7 +342,9 @@ function startReading() {
         {
             acceptNode(node) {
                 const tag = node.parentElement?.tagName?.toLowerCase();
-                if (["script", "style", "noscript", "rt"].includes(tag)) return NodeFilter.FILTER_REJECT;
+                if (["script", "style", "noscript"].includes(tag)) return NodeFilter.FILTER_REJECT;
+                if (tag === "rt") return NodeFilter.FILTER_SKIP;
+                if (tag === "ruby") return NodeFilter.FILTER_SKIP;
                 if (node.textContent.trim().length < 2) return NodeFilter.FILTER_REJECT;
                 return NodeFilter.FILTER_ACCEPT;
             }

@@ -80,5 +80,19 @@
         "language": "es",
         "suspicious": false,
         "timestamp": "2026-05-25 15:01:14.164605"
+    },
+    {
+        "difficulty": "38.33",
+        "percentage": 0.4,
+        "language": "es",
+        "suspicious": false,
+        "timestamp": "2026-05-25 15:16:38.813956"
+    },
+    {
+        "difficulty": "38.04",
+        "percentage": 0.3,
+        "language": "es",
+        "suspicious": false,
+        "timestamp": "2026-05-26 11:51:41.380255"
     }
 ]
