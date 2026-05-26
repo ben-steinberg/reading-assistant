@@ -159,6 +159,9 @@ def give_suggested_words(level, language="ja"):
             if cefr_levels.get(word.lower()) in target_levels:
                 suggested_words.append(word)
 
+    if not suggested_words:
+        suggested_words = list(sorted_clicked.keys())
+
     final_suggestions = suggested_words[:5]
     print(f"Suggested words ({language}):", final_suggestions)
     return final_suggestions
